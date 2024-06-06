@@ -1,0 +1,47 @@
+﻿@page "/smartphoneform"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JS
+
+@using InventarioBlazorApp.Models
+
+<h3>Ingresar Datos de Smartphone</h3>
+
+<div>
+    <label>Número de Serie:</label>
+    <input @bind="smartphone.NumeroDeSerie" />
+</div>
+<div>
+    <label>Marca:</label>
+    <input @bind="smartphone.Marca" />
+</div>
+<div>
+    <label>Modelo:</label>
+    <input @bind="smartphone.Modelo" />
+</div>
+<div>
+    <label>Sistema Operativo:</label>
+    <input @bind="smartphone.SistemaOperativo" />
+</div>
+<div>
+    <label>Número de Cámaras:</label>
+    <input type="number" @bind="smartphone.NumeroDeCamaras" />
+</div>
+<button @onclick="GuardarSmartphone">Guardar</button>
+
+@code {
+    private Smartphone smartphone = new Smartphone();
+
+    private async Task GuardarSmartphone()
+    {
+        // Leer datos existentes de Local Storage
+        var smartphones = await localStorage.GetItemAsync<List<Smartphone>>("smartphones") ?? new List<Smartphone>();
+
+        // Agregar nuevo smartphone
+        smartphones.Add(smartphone);
+
+        // Guardar datos en Local Storage
+        await localStorage.SetItemAsync("smartphones", smartphones);
+
+        await JS.InvokeVoidAsync("alert", "Smartphone guardado con éxito.");
+    }
+}

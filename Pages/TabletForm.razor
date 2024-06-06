@@ -1,0 +1,50 @@
+﻿@page "/tabletform"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JS
+
+@using InventarioBlazorApp.Models
+
+<h3>Ingresar Datos de Tablet</h3>
+
+<div>
+    <label>Número de Serie:</label>
+    <input @bind="tablet.NumeroDeSerie" />
+</div>
+<div>
+    <label>Marca:</label>
+    <input @bind="tablet.Marca" />
+</div>
+<div>
+    <label>Modelo:</label>
+    <input @bind="tablet.Modelo" />
+</div>
+<div>
+    <label>Tamaño de Pantalla (pulgadas):</label>
+    <input type="number" @bind="tablet.TamanoPantalla" />
+</div>
+<div>
+    <label>Soporte para Stylus:</label>
+    <select @bind="tablet.SoporteStylus">
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+    </select>
+</div>
+<button @onclick="GuardarTablet">Guardar</button>
+
+@code {
+    private Tablet tablet = new Tablet();
+
+    private async Task GuardarTablet()
+    {
+        // Leer datos existentes de Local Storage
+        var tablets = await localStorage.GetItemAsync<List<Tablet>>("tablets") ?? new List<Tablet>();
+
+        // Agregar nueva tablet
+        tablets.Add(tablet);
+
+        // Guardar datos en Local Storage
+        await localStorage.SetItemAsync("tablets", tablets);
+
+        await JS.InvokeVoidAsync("alert", "Tablet guardada con éxito.");
+    }
+}

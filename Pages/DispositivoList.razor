@@ -1,0 +1,49 @@
+﻿@page "/dispositivolist"
+@using Blazored.LocalStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@using InventarioBlazorApp.Models
+
+<h3>Listado de Dispositivos</h3>
+
+@if (dispositivos == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <p>Total de dispositivos: @dispositivos.Count</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Número de Serie</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dispositivo in dispositivos)
+            {
+                <tr>
+                    <td>@dispositivo.NumeroDeSerie</td>
+                    <td>@dispositivo.Marca</td>
+                    <td>@dispositivo.Modelo</td>
+                    <td>@dispositivo.GetType().Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Dispositivo> dispositivos;
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        dispositivos = await LocalStorage.GetItemAsync<List<Dispositivo>>("dispositivos");
+    }
+}

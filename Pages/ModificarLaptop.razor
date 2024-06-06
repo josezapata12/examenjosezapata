@@ -1,0 +1,57 @@
+﻿@page "/modificarlaptop/{NumeroDeSerie}"
+@using Blazored.LocalStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JS
+@using InventarioBlazorApp.Models
+
+<h3>Modificar Datos de Laptop</h3>
+
+@if (laptop == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <div>
+        <label>Número de Serie:</label>
+        <input @bind="laptop.NumeroDeSerie" disabled />
+    </div>
+    <div>
+        <label>Marca:</label>
+        <input @bind="laptop.Marca" />
+    </div>
+    <div>
+        <label>Modelo:</label>
+        <input @bind="laptop.Modelo" />
+    </div>
+    <div>
+        <label>Memoria RAM (GB):</label>
+        <input type="number" @bind="laptop.MemoriaRAM" />
+    </div>
+    <div>
+        <label>Almacenamiento (GB):</label>
+        <input type="number" @bind="laptop.Almacenamiento" />
+    </div>
+    <button @onclick="GuardarLaptop">Guardar</button>
+}
+
+@code {
+    [Parameter]
+    public string NumeroDeSerie { get; set; }
+
+    private Laptop laptop;
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        laptop = await LocalStorage.GetItemAsync<Laptop>("laptop-" + NumeroDeSerie);
+    }
+
+    private async Task GuardarLaptop()
+    {
+        await LocalStorage.SetItemAsync("laptop-" + laptop.NumeroDeSerie, laptop);
+        await JS.InvokeVoidAsync("alert", "Laptop modificada con éxito.");
+    }
+}

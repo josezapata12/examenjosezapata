@@ -1,0 +1,47 @@
+﻿@page "/laptopform"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JS
+
+@using InventarioBlazorApp.Models
+
+<h3>Ingresar Datos de Laptop</h3>
+
+<div>
+    <label>Número de Serie:</label>
+    <input @bind="laptop.NumeroDeSerie" />
+</div>
+<div>
+    <label>Marca:</label>
+    <input @bind="laptop.Marca" />
+</div>
+<div>
+    <label>Modelo:</label>
+    <input @bind="laptop.Modelo" />
+</div>
+<div>
+    <label>Memoria RAM (GB):</label>
+    <input type="number" @bind="laptop.MemoriaRAM" />
+</div>
+<div>
+    <label>Almacenamiento (GB):</label>
+    <input type="number" @bind="laptop.Almacenamiento" />
+</div>
+<button @onclick="GuardarLaptop">Guardar</button>
+
+@code {
+    private Laptop laptop = new Laptop();
+
+    private async Task GuardarLaptop()
+    {
+        // Leer datos existentes de Local Storage
+        var laptops = await localStorage.GetItemAsync<List<Laptop>>("laptops") ?? new List<Laptop>();
+
+        // Agregar nueva laptop
+        laptops.Add(laptop);
+
+        // Guardar datos en Local Storage
+        await localStorage.SetItemAsync("laptops", laptops);
+
+        await JS.InvokeVoidAsync("alert", "Laptop guardada con éxito.");
+    }
+}
